@@ -62,3 +62,33 @@ without it calling it shows error in ApiError
 using ApiError or ApiResponse follows structed format for every case i.e rs.status(200).json(
     new ApiError(200,"something Gone Wrong!",user)
 )
+-----------------------------------------------------------
+                User and video Models
+-----------------------------------------------------------
+* Used mongoose-aggregate-paginate-v2(package) -- it helps to render only 10 videos per page. 
+-> if a DB has 10billion videos ; without paginate the server tries to download all videos but due to paginagte , we can restrict to certion number of videos.
+-> it is called by using middleware "plugin"
+
+* bcrypt - used to encrypt the password and decrypt it which tries to secure our password in form of strings.
+->"bcrypt.hash(this.password,10)" - hashing means encrypting the password but can't be decrypted back. 
+-> hashing is one way but bcrypt is two ways i.e both encrypting and decrypting
+-> that 10 is "salt" which is used to increase the security and makes it slow.
+is user1 password is "enosh" and user2 's password is also "enosh" then it gives error but due to salt to 10 , therefore user1->enosh , user2-enosh
+->this is called by using a middleware "pre" i.e before only we are tring to encrypt before exporting
+
+* jwt - json web token 
+->Access token will be of short time , which makes our credentials , our data more secure . after Access token time it will log out automatically(Access_token_expires).
+->Refresh_token is for more time , i.e may be days . insteasd of everytime asking the login credentails even after 1 day , the values stored in the server gives to browser wothout user manually entering . 
+
+@ index - without it , searching a name out of million users will be difficulr and time consuming but instead index used as array which stores data may in sequentional order. eg: a:1-20, b:21-40 
+@ trim - it will trim of the extra spaces before and after the word making two words same .eg: "  Hello World  " is same as "Hello World"
+
+-----------------------------------------------------------
+                Uplaoding file in the backend
+-----------------------------------------------------------
+* cloudinary a platform where we store our videos and images, it can compress and enlarge it . the uploaded data is converted to url and returns us the url which is stroed in the mongoDB.
+
+* multer is a middleware , used to recive or send files from from frontend or server. 
+-> express cannot decode the file that has been sen t to backend , so multer parses it and stores in the disk storage or memorystroage later from there it is uploaded to cloudinary then it is delected from the local storage.
+
+express->multer->localstorage->cloudinary->url->mongoDB->delete from the localStorage.
