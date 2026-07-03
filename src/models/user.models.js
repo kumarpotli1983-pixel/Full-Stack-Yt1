@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema({
     lowercase:true,
     trim:true,
   },
-  Fullname:{
+  fullname:{
     type:String,
     required:true,
     trim:true,
@@ -34,16 +34,15 @@ const userSchema = new mongoose.Schema({
   watchHistory:[
     {
       type:mongoose.Schema.Types.ObjectId,
-      ref:video
+      ref:"Video"
     }
   ],
   password:{
     type:String,
     required:[true,"Password is required"],
-    unique:true
   },
   refreshToken:{
-    type:true
+    type:String
   }
 
 },{timestamps:true})
@@ -51,7 +50,7 @@ const userSchema = new mongoose.Schema({
 userSchema.pre("save",async function (next){
   if(!this.isModified("password")) return next(); 
 
-  this.password = bcrypt.hash(this.password,10)
+  this.password =await bcrypt.hash(this.password,10)
   next()
 })
 
