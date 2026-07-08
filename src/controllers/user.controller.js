@@ -18,6 +18,7 @@ const registerUser = asyncHandler(async (req,res)=>{
   const {fullname,username,email,password} = req.body
   console.log("email:",email)
   
+
   /*if(fullname === "")
   {
     throw new ApiError(400,"full name is required")
@@ -35,6 +36,10 @@ const registerUser = asyncHandler(async (req,res)=>{
   if(existedUser){
     throw new ApiError(409,"User with email or username is already existed!")
   }
+
+  console.log("Body:", req.body);
+  console.log("Files:", req.files);
+  console.log("File:", req.file);
 
   const avatarLocalPath = req.files?.avatar[0]?.path;
   const coverImageLocalPath = req.files?.coverImage[0]?.path
@@ -56,7 +61,7 @@ const registerUser = asyncHandler(async (req,res)=>{
     coverImage: coverImage?.url|| "",
     email,
     password,
-    username:username.toLowercase()
+    username:username.toLowerCase()
   })
 
   const createdUser = await User.findById(user._id).select(
