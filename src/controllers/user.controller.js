@@ -3,7 +3,6 @@ import {ApiError} from "../utils/ApiError.js"
 import {User} from "../models/user.models.js"
 import {uploadOnCloudinary} from "../utils/cloudinary.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
-
 const registerUser = asyncHandler(async (req,res)=>{
   // get user details from frontend
   // validation - not empty 
@@ -48,7 +47,13 @@ const registerUser = asyncHandler(async (req,res)=>{
     throw new ApiError(400,"Avatar localPath is required")
   }
 
+  console.log("Avatar Local Path:", avatarLocalPath);
+  console.log("Calling uploadOnCloudinary...");
+
   const avatar = await uploadOnCloudinary(avatarLocalPath);
+
+  console.log("Returned Avatar:", avatar);
+
   const coverImage = await uploadOnCloudinary(coverImageLocalPath);
 
   if(!avatar){
