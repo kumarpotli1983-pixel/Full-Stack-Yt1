@@ -15,7 +15,6 @@ const registerUser = asyncHandler(async (req,res)=>{
   // return response
 
   const {fullname,username,email,password} = req.body
-  console.log("email:",email)
   
 
   /*if(fullname === "")
@@ -55,7 +54,10 @@ const registerUser = asyncHandler(async (req,res)=>{
   console.log("Returned Avatar:", avatar);
 
   let coverImage=null;
-
+  // instead of if case , we can do if(req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length>0){
+  //   coverImageLocalPath = req.files.coverImage[0].path
+  // }
+  
   if(coverImageLocalPath){
      coverImage = await uploadOnCloudinary(coverImageLocalPath);
   }
