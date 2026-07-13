@@ -90,11 +90,11 @@ const registerUser = asyncHandler(async (req,res)=>{
 
 })
 
-const generateAccessAndRefreshTokens = async((user_id)=>{
+const generateAccessAndRefreshTokens =( async (user_id)=>{
   try {
-    const user = await User.findOne({user_id})
-    const accessToken = await user.generateAccessToken()
-    const refreshToken = await user.generateRefreshToken()
+    const user = await User.findById(user_id)
+    const accessToken = user.generateAccessToken()
+    const refreshToken = user.generateRefreshToken()
     
     user.refreshToken = refreshToken;
     await user.save({ validateBeforeSave: false })
@@ -113,6 +113,7 @@ const loginUser = asyncHandler(async (req,res)=>{
   // take username and check if it matches with Db
   // if all matches then access and refresh token
   // send cookies
+  console.log(req.body);
   const {username,email,password} = req.body
 
   if([username,email,password].some((field)=>field?.trim()==="")){
@@ -124,10 +125,10 @@ const loginUser = asyncHandler(async (req,res)=>{
     // $or:[{username},{email}] lets check only for email then compare pass and username
   })
   if(!user) {
-    throw new ApiError(404,"User does not Exist")
+    throw new ApiError(404,"User does not Exist or Email doesnt exist")
   }
 
-  if(!username.trim()===user.username){
+  if(username.trim()!==user.username){
     throw new ApiError(402,"username is invalid")
   }
 
