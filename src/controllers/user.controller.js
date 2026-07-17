@@ -1,7 +1,7 @@
 import { asyncHandler } from "../utils/asyncHandler.js"
 import {ApiError} from "../utils/ApiError.js"
 import {User} from "../models/user.models.js"
-import {uploadOnCloudinary, uploadOnCloudinary} from "../utils/cloudinary.js"
+import {uploadOnCloudinary} from "../utils/cloudinary.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
 import jwt from "jsonwebtoken"
 
@@ -165,8 +165,11 @@ const logoutUser = asyncHandler(async(req,res)=>{
     req.user._id,{
       $set:{
         refreshToken:undefined
-      }
-    },
+      }//$unset:{
+    //   refreshToken:1}this removes field from document
+    // }
+    }
+    ,
     {
       new:true
     }
@@ -205,7 +208,7 @@ const refreshAccessToken = asyncHandler(async(req,res)=>{
 
     if(incomingRefreshToken!==user.refreshToken)
     {
-      throw new ApiError(401,"Refresh Token not matched or expired or used");
+      throw new ApiError(401,error?.message || "Refresh Token not matched or expired or used");
     }
 
     const {accessToken,newRefreshToken} = await generateAccessAndRefreshTokens(user._id);
@@ -228,7 +231,7 @@ const refreshAccessToken = asyncHandler(async(req,res)=>{
       )
     )
   } catch (error) {
-    throw new ApiError(401,error?.messsage || "Access Token Refreshed failed xxx")
+    throw new ApiError(401, "Access Token Refreshed failed xxx")
   }
 })
 
