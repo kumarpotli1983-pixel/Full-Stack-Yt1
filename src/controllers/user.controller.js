@@ -4,6 +4,7 @@ import {User} from "../models/user.models.js"
 import {uploadOnCloudinary} from "../utils/cloudinary.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
 import jwt from "jsonwebtoken"
+import mongoose from "mongoose"
 
 const registerUser = asyncHandler(async (req,res)=>{
   // get user details from frontend
@@ -163,12 +164,11 @@ const loginUser = asyncHandler(async (req,res)=>{
 const logoutUser = asyncHandler(async(req,res)=>{
   await User.findByIdAndUpdate(
     req.user._id,{
-      $set:{
-        refreshToken:undefined
-      }//$unset:{
-    //   refreshToken:1}this removes field from document
-    // }
-    }
+      $unset:{
+      refreshToken:1}//this removes field from document
+    }//$set:{
+      //   refreshToken:undefined
+      // }
     ,
     {
       new:true
@@ -211,7 +211,7 @@ const refreshAccessToken = asyncHandler(async(req,res)=>{
       throw new ApiError(401,error?.message || "Refresh Token not matched or expired or used");
     }
 
-    const {accessToken,newRefreshToken} = await generateAccessAndRefreshTokens(user._id);
+    const {accessToken,refreshToken} = await generateAccessAndRefreshTokens(user._id);
     
     const options={
       httpOnly:true,
@@ -220,12 +220,12 @@ const refreshAccessToken = asyncHandler(async(req,res)=>{
     res
     .status(200)
     .cookie("accessToken",accessToken,options)
-    .cookie("refreshToken",newRefreshToken,options)
+    .cookie("refreshToken",refreshToken,options)
     .json(
-      ApiResponse(
+      new ApiResponse(
         200,
         {accessToken:accessToken,
-          refreshToken:newRefreshToken
+          refreshToken:refreshToken
         },
         "Access Token Refreshed Successfully"
       )
@@ -279,7 +279,7 @@ const updateAccountDetails = asyncHandler(async(req,res)=>{
     throw new ApiError(400,"All fields are required")
   }
 
-  const user = User.findByIdAndUpdate(req.user?._id,
+  const user = await User.findByIdAndUpdate(req.user?._id,
     {
       $set:{
         fullname,
@@ -430,7 +430,7 @@ const getWatchHistory = asyncHandler(async(req,res)=>
   const user = await User.aggregate([
     {
       $match:{
-        _id:new mongoose.Schema.Types.ObjectId(req.user._id)
+        _id:new mongoose.Types.ObjectId(req.user._id)
       }
     },
     {

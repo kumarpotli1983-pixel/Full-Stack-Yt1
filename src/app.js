@@ -18,7 +18,7 @@ age:30
 backend receives  it as a string, {"\name"\="\Enosh"\...} something like that , so when we call console.log(req.body)=>gives undifined.
 ----- express.json(), express uses a middleware , now that js object is made in the form of object from string 
 */
-app.use(express.urlencoded({extended:true,limt:"16kb"}))
+app.use(express.urlencoded({extended:true,limit:"16kb"}))
 /*
   Urlencoded is for HTML form
   <form>
@@ -39,11 +39,11 @@ app.use(cookieParser())
  same like why express.json is used, from the server the express recives cookie but in the form one entire string , "name:Enosh age:40 gender:male" to store cookie in the form of object for better readability and usage cookie-parser parses it and store in the form of object and whenever user comes to site for login page second time it automatically sned to browser
  */
 
-
 //import Routes
 import userRouter from './routes/user.routes.js'
 
 //  routes declartion
+
 app.use("/api/v1/users",userRouter)
 //http:localhost:8000/api/v1/users/register
 
